@@ -10,18 +10,21 @@
 typedef struct Qna {
     char que[50];
     int ans;
-} Qna;UserScore;
+} Qna;
+
+typedef struct UserScore {
+    char name[50];
+    int score;
+} UserScore;
 
 void menu();
 void quiz(int difficulty);
 int diffpage();
-void leaderboard(UserScore scores[], int count);
+void leaderboard();
 void sorter(int limit, int index, Qna arr[]);
 void exitc();
 
-// addition and subtraction
-Qna baby[] =
-{ 
+Qna baby[] = { 
     {"1 + 1", 2},
     {"2 + 2", 4},
     {"3 + 3", 6},
@@ -36,9 +39,7 @@ Qna baby[] =
     {"12 + 12", 24}
 };
 
-// multiplication, division, 2-exponents
-Qna ez[] =
-{ 
+Qna ez[] = { 
     {"2 * 2", 4},
     {"2 * 4", 8},
     {"3 * 3", 9},
@@ -61,9 +62,7 @@ Qna ez[] =
     {"6^2", 36}
 };
 
-// algebra (PEMDAS)
-Qna ms[] =
-{ 
+Qna ms[] = { 
     {"9 - (3 + 2) * 2", 1},
     {"(10 - 2) / 2 + 3", 7},
     {"(10 - 2) / 2 + 5", 9},
@@ -79,22 +78,20 @@ Qna ms[] =
     {"(5 + 5) * (2 + 3)", 50}
 };
 
-int main (void)
-{
-    srand(time(0));
+int main(void) {
+    srand((unsigned int)time(0));
     menu();
     return 0;
 }
 
-void menu()
-{
+void menu() {
     int select = 0;
     char key;
-    while(1) {
+    while (1) {
         system("cls");
-        puts("\033[0;36mWelcome to Kuso Kuizu!\033[0m\n==========================\n");
+        printf("\033[0;36mWelcome to Kuso Kuizu!\033[0m\n==========================\n\n");
 
-        switch(select) {
+        switch (select) {
             default:
                 printf("1. Quiz Time   <<\n2. Leaderboard\n3. Exit\n");
                 break;
@@ -104,26 +101,21 @@ void menu()
             case 2:
                 printf("1. Quiz Time\n2. Leaderboard\n3. Exit        <<\n");
                 break;
-        }       
+        }
 
         key = _getch();
 
         if (key == 'w' || key == 'W') {
-            if (select > 0) {
-                select--;
-            }
+            if (select > 0) select--;
         } else if (key == 's' || key == 'S') {
-            if (select < 2) {
-                select++;
-            }
+            if (select < 2) select++;
         } else if (key == '\r') {
-            if(select == 0) {
+            if (select == 0) {
                 int diff = diffpage();
                 quiz(diff);
-            } else if(select == 1) {
+            } else if (select == 1) {
                 leaderboard();
-                continue;
-            } else if(select == 2) {
+            } else if (select == 2) {
                 exitc();
                 return;
             }
@@ -131,147 +123,136 @@ void menu()
     }
 }
 
-int diffpage()
-{
+int diffpage() {
     int select = 0;
     char key;
-    while(1) {
+    while (1) {
         system("cls");
-        puts("Select Difficulty\n=================\n");
+        printf("Select Difficulty\n=================\n\n");
 
-        switch(select) {
+        switch (select) {
             default:
-                printf("1. Baby Mode << 2. Easy    3. Above Elementary School   ");
+                printf("1. Baby Mode << 2. Easy    3. Above Elementary School   \n");
                 break;
             case 1:
-                printf("1. Baby Mode    2. Easy << 3. Above Elementary School   ");
+                printf("1. Baby Mode    2. Easy << 3. Above Elementary School   \n");
                 break;
             case 2:
-                printf("1. Baby Mode    2. Easy    3. Above Elementary School <<");
+                printf("1. Baby Mode    2. Easy    3. Above Elementary School <<\n");
                 break;
-        }       
+        }
 
         key = _getch();
 
         if (key == 'a' || key == 'A') {
-            if (select > 0) {
-                select--;
-            }
+            if (select > 0) select--;
         } else if (key == 'd' || key == 'D') {
-            if (select < 2) {
-                select++;
-            }
+            if (select < 2) select++;
         } else if (key == '\r') {
-            if(select == 0) {
-                return 1;
-            } else if(select == 1) {
-                return 2;
-            } else if(select == 2) {
-                return 3;
-            }
+            return select + 1;
         }
     }
 }
 
-void quiz(int difficulty)
-{
+void quiz(int difficulty) {
     system("cls");
+    char name[50];
     double answer = 0;
     int correct = 0, index = 0;
+    Qna *questions;
+    int size;
 
-    if(difficulty == 1) {
-        const int size = (sizeof(baby) / sizeof(baby[0])) / 2;
-        int limit = size;
-        for (int i = 0; i < size; i++) {
-            system("cls");
-            index = rand() % limit;
-            printf("%d. %s\nAnswer: ", i + 1, baby[index].que);
-            scanf("%lf", &answer);
+    // Input name for their user in leaderboard
+    printf("Enter your name: ");
+    scanf("%s", name);
 
-            if (answer == baby[index].ans) {
-                correct++;
-            }
-
-            sorter(limit, index, baby);
-            limit--;
-        }
-        system("cls");
-        printf("%d / %d \033[0;32mCorrect\033[0m", correct, size);
-
+    if (difficulty == 1) {
+        questions = baby;
+        size = sizeof(baby) / sizeof(baby[0]);
     } else if (difficulty == 2) {
-        const int size = (sizeof(ez) / sizeof(ez[0])) / 2;
-        int limit = size;
-        for (int i = 0; i < size; i++) {
-            system("cls");
-            index = rand() % limit;
-            printf("%d. %s\nAnswer: ", i + 1, ez[index].que);
-            scanf("%lf", &answer);
-
-            if (answer == ez[index].ans) {
-                correct++;
-            }
-
-            sorter(limit, index, ez);
-            limit--;
-        }
-        system("cls");
-        printf("%d / %d \033[0;32mCorrect\033[0m", correct, size);
-
-    } else if (difficulty == 3) {
-        const int size = (sizeof(ms) / sizeof(ms[0])) / 2;
-        int limit = limit;
-        for (int i = 0; i < size; i++) {
-            system("cls");
-            index = rand() % size;
-            printf("%d. %s\nAnswer: ", i + 1, ms[index].que);
-            scanf("%lf", &answer);
-
-            if (answer == ms[index].ans) {
-                correct++;
-            }
-
-            sorter(limit, index, ms);
-            limit--;
-        }
-        system("cls");
-        printf("%d / %d \033[0;32mCorrect\033[0m", correct, size);
+        questions = ez;
+        size = sizeof(ez) / sizeof(ez[0]);
+    } else {
+        questions = ms;
+        size = sizeof(ms) / sizeof(ms[0]);
     }
 
+    for (int i = 0; i < size / 2; i++) {
+        system("cls");
+        index = rand() % size;
+        printf("%d. %s\nAnswer: ", i + 1, questions[index].que);
+        scanf("%lf", &answer);
+
+        if (answer == questions[index].ans) correct++;
+
+        sorter(size, index, questions);
+        size--;
+    }
+
+    system("cls");
+    printf("%d / %d \033[0;32mCorrect\033[0m\n", correct, size / 2);
+
+    // Save the score to the file
+    FILE *file = fopen(FILE_NAME, "a");
+    if (file == NULL) {
+        printf("Error: Could not open scores file.\n");
+        getchar();
+        return;
+    }
+
+    fprintf(file, "%s,%d\n", name, correct);
+    fclose(file);
+
+    printf("Your score has been saved!\n");
     getchar();
     getchar();
-    return;
 }
 
-void leaderboard()
-{
+//file
+void leaderboard() {
     system("cls");
-    // to do
     FILE *file = fopen(FILE_NAME, "r");
     if (file == NULL) {
         printf("No scores available.\n");
+        getchar();
         return;
-}
+    }
 
     UserScore scores[MAX_USERS];
     int count = 0;
 
-    // Read scores from file
     while (fscanf(file, "%[^,],%d\n", scores[count].name, &scores[count].score) != EOF) {
         count++;
     }
     fclose(file);
+
+    printf("Leaderboard:\n\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d. %s - %d\n", i + 1, scores[i].name, scores[i].score);
+    }
+
+    getchar();
 }
 
-void sorter(int limit, int index, Qna arr[])
-{
-    int end = limit - 1;
-    Qna tmp = arr[end];
-    arr[end] = arr[index];
+//sorting
+void sorter(int limit, int index, Qna arr[]) {
+    Qna tmp = arr[limit - 1];
+    arr[limit - 1] = arr[index];
     arr[index] = tmp;
 }
 
-void exitc()
-{
+void exitc() {
     system("cls");
-    // exit screen design
+    printf("\033[0;35m|=========================|\033[0m\n");
+    printf("\033[0;35m|==      ========      ===|\033[0m\n");
+    printf("\033[0;35m|====   ===========   ====|\033[0m\n");
+    printf("\033[0;35m|===========  ============|\033[0m\n");
+    printf("\033[0;35m|==========    ===========|\033[0m\n");
+    printf("\033[0;35m|=========================|\033[0m\n");
+    printf("\033[0;35m|=====  ===========  =====|\033[0m\n");
+    printf("\033[0;35m|======   ======   =======|\033[0m\n");
+    printf("\033[0;35m|=========      ==========|\033[0m\n");
+    printf("\033[0;35m|=========================|\033[0m\n");
+    printf("\033[0;35m|=========================|\033[0m\n\n");
+    printf("\033[0;35mThank You For Playing!\033[0m\n");
 }
